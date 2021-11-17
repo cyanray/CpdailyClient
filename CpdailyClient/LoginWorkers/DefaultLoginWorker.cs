@@ -52,11 +52,7 @@ namespace Cpdaily.LoginWorkers
             //** 解析 pwdDefaultEncryptSalt **//
             var matches = Regex.Matches(response.Content, "var pwdDefaultEncryptSalt *= *\"(.*?)\";");
             if (matches.Count <= 0) throw new Exception("没有匹配到 pwdDefaultEncryptSalt。");
-            string pwdDefaultEncryptSalt = null;
-            if (matches[0].Success)
-            {
-                pwdDefaultEncryptSalt = matches[0].Groups[1].Value;
-            }
+            string pwdDefaultEncryptSalt = matches[0].Groups[1].Value;
 
             // update encryptedPwd
             byte[] iv = Encoding.ASCII.GetBytes(CpdailyCrypto.RandomString(16));
@@ -88,8 +84,20 @@ namespace Cpdaily.LoginWorkers
 
         public override async Task<string> IdsLogin(LoginParameter loginParameter)
         {
-            string loginUrl = loginParameter.ActionUrl;
-            IRestResponse response = null;
+            if (loginParameter.ActionUrl is null)
+            {
+                throw new ArgumentNullException(nameof(loginParameter.ActionUrl));
+            }
+            if (loginParameter.Username is null)
+            {
+                throw new ArgumentNullException(nameof(loginParameter.Username));
+            }
+            if (loginParameter.EncryptedPassword is null)
+            {
+                throw new ArgumentNullException(nameof(loginParameter.EncryptedPassword));
+            }
+            string? loginUrl = loginParameter.ActionUrl;
+            IRestResponse? response = null;
             do
             {
                 RestClient client = new RestClient(loginUrl)
@@ -101,23 +109,21 @@ namespace Cpdaily.LoginWorkers
                 request.AddHeader("User-Agent", WebUserAgent);
                 request.AddParameter("username", loginParameter.Username);
                 request.AddParameter("password", loginParameter.EncryptedPassword);
-                request.AddParameter("captchaResponse", loginParameter.CaptchaValue);
                 request.AddParameter("lt", loginParameter.Parameters["lt"]);
                 request.AddParameter("dllt", "mobileLogin");
                 request.AddParameter("execution", loginParameter.Parameters["execution"]);
                 request.AddParameter("_eventId", "submit");
                 request.AddParameter("rmShown", "1");
+                if (loginParameter.CaptchaValue is not null)
+                {
+                    request.AddParameter("captchaResponse", loginParameter.CaptchaValue);
+                }
                 response = await client.ExecutePostAsync(request);
 
                 loginUrl = response.Headers.Where(x => x.Name == "Location").Select(x => x.Value.ToString()).FirstOrDefault();
             } while (!string.IsNullOrEmpty(loginUrl));
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var cookie in response.Cookies)
-            {
-                sb.Append($"{cookie.Name}={cookie.Value}; ");
-            }
-            return sb.ToString();
+            var result = string.Join(" ", loginParameter.CookieContainer.GetAllCookies().Select(x => $"{x.Name}={x.Value};"));
+            return result;
         }
 
         public override Task<string> GetEncrypedToken(LoginParameter loginParameter)
