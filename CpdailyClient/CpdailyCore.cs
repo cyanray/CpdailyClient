@@ -37,6 +37,20 @@ namespace Cpdaily
         private const string SaltForGetSecretKey = "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824";
         private readonly CookieContainer CookieContainer = new CookieContainer();
 
+        private RestRequest CreateApiRequest(Method method, string SessionToken = "szFn6zAbjjU=")
+        {
+            var request = new RestRequest(method);
+            request.AddHeader("sessionTokenKey", SessionToken);
+            request.AddHeader("SessionToken", SessionToken);
+            request.AddHeader("clientType", "cpdaily_student");
+            request.AddHeader("deviceType", "1");
+            request.AddHeader("CpdailyClientType", "CPDAILY");
+            request.AddHeader("CpdailyStandAlone", "0");
+            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
+            request.AddHeader("User-Agent", ApiUserAgent);
+            return request;
+        }
+
         /// <summary>
         /// 解析响应并返回有效的 ApiResponse
         /// </summary>
@@ -80,13 +94,7 @@ namespace Cpdaily
             {
                 CookieContainer = CookieContainer
             };
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("sessionTokenKey", "szFn6zAbjjU=");
-            request.AddHeader("SessionToken", "szFn6zAbjjU=");
-            request.AddHeader("CpdailyClientType", "CPDAILY");
-            request.AddHeader("CpdailyStandAlone", "0");
-            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
+            var request = CreateApiRequest(Method.POST);
             request.AddJsonBody(new { p, s });
             var response = await client.ExecutePostAsync(request);
             ApiResponse<string> apiResponse = ParseOrThrowException<string>(response);
@@ -115,13 +123,7 @@ namespace Cpdaily
             {
                 CookieContainer = CookieContainer
             };
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("sessionTokenKey", "szFn6zAbjjU=");
-            request.AddHeader("SessionToken", "szFn6zAbjjU=");
-            request.AddHeader("CpdailyClientType", "CPDAILY");
-            request.AddHeader("CpdailyStandAlone", "0");
-            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
+            var request = CreateApiRequest(Method.GET);
             var response = await client.ExecuteGetAsync(request);
             ApiResponse<object> apiResponse= ParseOrThrowException<object>(response);
 
@@ -154,13 +156,7 @@ namespace Cpdaily
             {
                 CookieContainer = CookieContainer
             };
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("sessionTokenKey", "szFn6zAbjjU=");
-            request.AddHeader("SessionToken", "szFn6zAbjjU=");
-            request.AddHeader("CpdailyClientType", "CPDAILY");
-            request.AddHeader("CpdailyStandAlone", "0");
-            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
+            var request = CreateApiRequest(Method.GET);
             request.AddParameter("a", encryptedId);
             request.AddParameter("b", "firstv");
             request.AddParameter("oick", CpdailyCrypto.GetOick());
@@ -211,15 +207,7 @@ namespace Cpdaily
             {
                 CookieContainer = result
             };
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("sessionTokenKey", "szFn6zAbjjU=");
-            request.AddHeader("SessionToken", "szFn6zAbjjU=");
-            request.AddHeader("clientType", "cpdaily_student");
-            request.AddHeader("deviceType", "1");
-            request.AddHeader("CpdailyClientType", "CPDAILY");
-            request.AddHeader("CpdailyStandAlone", "0");
-            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
+            var request = CreateApiRequest(Method.POST);
             request.AddJsonBody(new { a = encryptedData, b = "firstv" });
             var response = await client.ExecutePostAsync(request);
             ApiResponse<string> apiResponse = ParseOrThrowException<string>(response);
@@ -249,15 +237,7 @@ namespace Cpdaily
             {
                 CookieContainer = cookieContainer
             };
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("sessionTokenKey", "szFn6zAbjjU=");
-            request.AddHeader("SessionToken", "szFn6zAbjjU=");
-            request.AddHeader("clientType", "cpdaily_student");
-            request.AddHeader("deviceType", "1");
-            request.AddHeader("CpdailyClientType", "CPDAILY");
-            request.AddHeader("CpdailyStandAlone", "0");
-            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
+            var request = CreateApiRequest(Method.POST);
             request.AddJsonBody(new { mobile });
             var response = await client.ExecutePostAsync(request);
             if (response.StatusCode != HttpStatusCode.OK)
@@ -285,15 +265,7 @@ namespace Cpdaily
             {
                 CookieContainer = cookieContainer
             };
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("sessionTokenKey", "szFn6zAbjjU=");
-            request.AddHeader("SessionToken", "szFn6zAbjjU=");
-            request.AddHeader("clientType", "cpdaily_student");
-            request.AddHeader("deviceType", "1");
-            request.AddHeader("CpdailyClientType", "CPDAILY");
-            request.AddHeader("CpdailyStandAlone", "0");
-            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
+            var request = CreateApiRequest(Method.POST);
             request.AddJsonBody(new { ticket = encryptedToken, mobile = phoneNumber, messageCode });
             var response = await client.ExecutePostAsync(request);
             _ = ParseOrThrowException<object>(response);
@@ -313,15 +285,7 @@ namespace Cpdaily
             {
                 CookieContainer = CookieContainer
             };
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("sessionTokenKey", "szFn6zAbjjU=");
-            request.AddHeader("SessionToken", "szFn6zAbjjU=");
-            request.AddHeader("clientType", "cpdaily_student");
-            request.AddHeader("deviceType", "1");
-            request.AddHeader("CpdailyClientType", "CPDAILY");
-            request.AddHeader("CpdailyStandAlone", "0");
-            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
+            var request = CreateApiRequest(Method.POST);
             request.AddJsonBody(new { a = mobile, b = "firstv" });
             var response = await client.ExecutePostAsync(request);
             _ = ParseOrThrowException<object>(response);
@@ -360,15 +324,7 @@ namespace Cpdaily
             {
                 CookieContainer = CookieContainer
             };
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("sessionTokenKey", "szFn6zAbjjU=");
-            request.AddHeader("SessionToken", "szFn6zAbjjU=");
-            request.AddHeader("clientType", "cpdaily_student");
-            request.AddHeader("deviceType", "1");
-            request.AddHeader("CpdailyClientType", "CPDAILY");
-            request.AddHeader("CpdailyStandAlone", "0");
-            request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
+            var request = CreateApiRequest(Method.POST);
             request.AddJsonBody(new { a = data, b = "firstv" });
             var response = await client.ExecutePostAsync(request);
             ApiResponse<string> apiResponse = ParseOrThrowException<string>(response);
@@ -443,15 +399,7 @@ namespace Cpdaily
                     CookieContainer = cookieContainer,
                     FollowRedirects = false
                 };
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("sessionTokenKey", sessionToken);
-                request.AddHeader("SessionToken", sessionToken);
-                request.AddHeader("clientType", "cpdaily_student");
-                request.AddHeader("deviceType", "1");
-                request.AddHeader("CpdailyClientType", "CPDAILY");
-                request.AddHeader("CpdailyStandAlone", "0");
-                request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-                request.AddHeader("User-Agent", ApiUserAgent);
+                var request = CreateApiRequest(Method.GET, sessionToken);
                 request.AddHeader("tenantId", loginResult.TenantId);
                 request.AddHeader("TGC", tgc);
                 request.AddHeader("AmpCookies", ampCookies);
