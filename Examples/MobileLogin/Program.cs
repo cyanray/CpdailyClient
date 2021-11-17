@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
-using Cpdaily;
-using Cpdaily.CpdailyModels;
+﻿using Cpdaily;
 using Newtonsoft.Json;
-using RestSharp;
-using Serilog;
 
 namespace MobileLogin
 {
@@ -36,7 +25,7 @@ namespace MobileLogin
                 var secretKey = await cpdaily.GetSecretKeyAsync();
                 // 发送短信验证码
                 Console.WriteLine("发送短信验证码...");
-                await cpdaily.MobileLoginAsync(phoneNumber,secretKey);
+                await cpdaily.MobileLoginAsync(phoneNumber, secretKey);
                 // 输入短信验证码
                 string? code = null;
                 do
