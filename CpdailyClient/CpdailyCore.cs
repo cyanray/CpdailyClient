@@ -353,7 +353,7 @@ namespace Cpdaily
         /// </summary>
         /// <param name="loginResult">LoginResult Object</param>
         /// <returns>Cookie string</returns>
-        public async Task<string> UserStoreAppListAsync(LoginResult loginResult)
+        public async Task<string> UserStoreAppListAsync(LoginResult loginResult, SchoolDetails schoolDetails)
         {
             string? sessionTokenRaw = loginResult.SessionToken;
             string? tgcRaw = loginResult.Tgc;
@@ -365,6 +365,9 @@ namespace Cpdaily
             {
                 throw new Exception("TenantId 不可为 null.");
             }
+            string? ampUrlPrefix = schoolDetails.GetAmpUrlPrefix() ?? throw new ArgumentNullException("AmpUrlPrefix");
+            string? idsUrlPrefix = schoolDetails.GetIdsUrlPrefix() ?? throw new ArgumentNullException("IdsUrlPrefix");
+
             string sessionToken = CpdailyCrypto.DESEncrypt(sessionTokenRaw, "XCE927==", CpdailyCrypto.IV);
             string tgc = CpdailyCrypto.DESEncrypt(tgcRaw, "XCE927==", CpdailyCrypto.IV);
 
@@ -386,11 +389,11 @@ namespace Cpdaily
 
             string ampCookies = CpdailyCrypto.DESEncrypt(JsonConvert.SerializeObject(amp), "XCE927==", CpdailyCrypto.IV);
 
-            string? url = $"https://cqjtu.campusphere.net/wec-portal-mobile/client/userStoreAppList?oick={CpdailyCrypto.GetOick(loginResult.UserId)}";
+            string? url = $"{ampUrlPrefix}/wec-portal-mobile/client/userStoreAppList?oick={CpdailyCrypto.GetOick(loginResult.UserId)}";
             IRestResponse? response = null;
             var cookieContainer = new CookieContainer();
-            cookieContainer.Add(new Uri("http://ids.cqjtu.edu.cn/"), new Cookie("CASTGC", tgcRaw));
-            cookieContainer.Add(new Uri("http://ids.cqjtu.edu.cn/"), new Cookie("AUTHTGC", tgcRaw));
+            cookieContainer.Add(new Uri(idsUrlPrefix), new Cookie("CASTGC", tgcRaw));
+            cookieContainer.Add(new Uri(idsUrlPrefix), new Cookie("AUTHTGC", tgcRaw));
             // RestSharp 不会处理复杂的跳转，因此自行循环处理
             do
             {
@@ -409,6 +412,10 @@ namespace Cpdaily
             } while (!string.IsNullOrEmpty(url));
 
             var result = string.Join(" ", cookieContainer.GetAllCookies().Select(x => $"{x.Name}={x.Value};"));
+            if (!result.Contains("MOD_AUTH_CAS"))
+            {
+                throw new Exception("Cookie 中没有找到 MOD_AUTH_CAS, 请稍后再试!");
+            }
             return result;
         }
 
