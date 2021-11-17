@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Cpdaily;
@@ -11,53 +12,62 @@ using Newtonsoft.Json;
 using RestSharp;
 using Serilog;
 
-namespace Login
+namespace MobileLogin
 {
     public class Program
     {
         public static async Task Main(string[] args)
         {
-
-        }
-
-        public static async Task<IEnumerable<LibraryReservation>> GetLibraryReservationsAsync(string cookies)
-        {
-            var WebUserAgent = "Mozilla/5.0 (Linux; Android 5.1.1; vmos Build/LMY48G; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/52.0.2743.100 Mobile Safari/537.36  cpdaily/8.2.16 wisedu/8.2.16";
-            string url = "http://libopp.cqjtu.edu.cn/myorder.asp";
-            RestClient client = new RestClient(url)
+            if (args.Length < 2)
             {
-                UserAgent = WebUserAgent
-            };
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("Cookie", cookies);
-            request.AddHeader("X-Requested-With", "com.wisedu.cpdaily");
-            var response = await client.ExecuteGetAsync(request);
-            if (response.StatusCode != HttpStatusCode.OK)
-                throw new Exception("非200状态响应");
-            Regex regex = new Regex(@"(\d\d\d\d-\d\d-\d\d)[\s\S]+?(南岸馆|双福馆)[^=]+(=myorder\.asp\?cz=del&id=(\d+))?");
-            var matches = regex.Matches(response.Content);
-            List<LibraryReservation> result = new List<LibraryReservation>();
-            foreach (Match match in matches)
-            {
-                if (match.Success)
-                {
-                    var lr = new LibraryReservation()
-                    {
-                        Date = DateTime.ParseExact(match.Groups[1].Value, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                        LibraryName = match.Groups[2].Value,
-                        Id = match.Groups.Count >= 5 ? match.Groups[4].Value : ""
-                    };
-                    result.Add(lr);
-                }
+                Console.WriteLine("使用方法：dotnet Login.dll \"手机号码\" \"学校名称\"");
+                return;
             }
-            return result;
+            string phoneNumber = args[0];
+            string schoolName = args[1];
+            Console.WriteLine($"手机号码: {phoneNumber}");
+            Console.WriteLine($"学校名称: {schoolName}");
+            try
+            {
+                Console.WriteLine("尝试进行手机登录...");
+                // 创建 CpdailyClient 对象
+                var cpdaily = new CpdailyClient();
+                // 获取加密参数
+                var secretKey = await cpdaily.GetSecretKeyAsync();
+                // 发送短信验证码
+                Console.WriteLine("发送短信验证码...");
+                await cpdaily.MobileLoginAsync(phoneNumber,secretKey);
+                // 输入短信验证码
+                string? code = null;
+                do
+                {
+                    Console.Write("请输入验证码:");
+                    code = Console.ReadLine();
+                } while (string.IsNullOrEmpty(code));
+                // 短信验证码登录
+                var loginResult = await cpdaily.MobileLoginAsync(phoneNumber, code, secretKey);
+                Console.WriteLine("登录成功!");
+                Console.WriteLine("请保留 LoginResult，可以用于恢复登录状态:");
+                Console.WriteLine(JsonConvert.SerializeObject(loginResult));
+                // 获取学校信息
+                var schools = await cpdaily.GetSchoolsAsync();
+                var school = schools.Where(x => x.Name == schoolName).FirstOrDefault();
+                if (school is null)
+                {
+                    Console.WriteLine($"没有找到学校:{schoolName}!");
+                    return;
+                }
+                // 获取学校详情
+                var schoolDetails = await cpdaily.GetSchoolDetailsAsync(school, secretKey);
+                // 获取访问校内应用的 Cookie
+                var cookie = await cpdaily.UserStoreAppListAsync(loginResult, schoolDetails);
+                Console.WriteLine(cookie);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
         }
-
-    }
-    public class LibraryReservation
-    {
-        public string Id { get; set; }
-        public string LibraryName { get; set; }
-        public DateTime Date { get; set; }
     }
 }

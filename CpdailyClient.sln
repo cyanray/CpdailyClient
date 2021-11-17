@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CpdailyClient", "CpdailyCli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{D23CB35A-675A-4C76-9A3E-A0C80C19F28C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Login", "Login\Login.csproj", "{44E7998B-BFD8-4287-8CFB-306BA56ADDAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileLogin", "Login\MobileLogin.csproj", "{44E7998B-BFD8-4287-8CFB-306BA56ADDAD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{01B1C14C-BE44-44D8-8FCD-759464416FAC}"
 	ProjectSection(SolutionItems) = preProject
