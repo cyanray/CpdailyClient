@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Cpdaily.LoginWorkers
 {
+    /// <summary>
+    /// 通用 LoginWorker，适用于大多数学校。
+    /// </summary>
     public class DefaultLoginWorker : ILoginWorker
     {
         private async Task<bool> NeedCaptcha(string urlRoot, CookieContainer cookieContainer, string username)
