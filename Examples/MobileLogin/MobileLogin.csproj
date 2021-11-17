@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CpdailyClient\CpdailyClient.csproj" />
+    <ProjectReference Include="..\..\CpdailyClient\CpdailyClient.csproj" />
   </ItemGroup>
 
 </Project>
