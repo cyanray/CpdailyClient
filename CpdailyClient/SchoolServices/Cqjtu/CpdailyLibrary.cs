@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Cpdaily.Exceptions;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -67,8 +68,7 @@ namespace Cpdaily.SchoolServices.Cqjtu
             request.AddHeader("Cookie", cookie);
             var response = await client.ExecuteGetAsync(request);
             if (response.StatusCode != HttpStatusCode.OK)
-                throw new Exception("非200状态响应");
-            // TODO: parse error message.
+                throw new HttpRequestFailedException(response.StatusCode);
         }
 
         public async Task CancelReservationsAsync(string cookies, string Id)
@@ -83,10 +83,8 @@ namespace Cpdaily.SchoolServices.Cqjtu
             request.AddHeader("X-Requested-With", "com.wisedu.cpdaily");
             var response = await client.ExecuteGetAsync(request);
             if (response.StatusCode != HttpStatusCode.OK)
-                throw new Exception("非200状态响应");
-            // TODO: parse error message.
+                throw new HttpRequestFailedException(response.StatusCode);
         }
-
 
         public async Task<List<LibraryReservationLog>> GetReservationsAsync(string cookie)
         {
@@ -100,7 +98,7 @@ namespace Cpdaily.SchoolServices.Cqjtu
             request.AddHeader("X-Requested-With", "com.wisedu.cpdaily");
             var response = await client.ExecuteGetAsync(request);
             if (response.StatusCode != HttpStatusCode.OK)
-                throw new Exception("非200状态响应");
+                throw new HttpRequestFailedException(response.StatusCode);
             Regex regex = new Regex(@"(\d\d\d\d-\d\d-\d\d)[\s\S]+?(南岸馆|双福馆)[^=]+(=myorder\.asp\?cz=del&id=(\d+))?");
             var matches = regex.Matches(response.Content);
             List<LibraryReservationLog> result = new List<LibraryReservationLog>();
