@@ -456,7 +456,6 @@ namespace Cpdaily
                 UserAgent = WebUserAgent,
                 CookieContainer = cookieContainer
             };
-            client.Proxy = new WebProxy("127.0.0.1", 8888);
             var request = CreateApiRequest(Method.POST, sessionToken);
             request.AddHeader("tenantId", loginResult.TenantId);
             request.AddHeader("CpdailyInfo", deviceInfo.Encrypt());

@@ -13,7 +13,7 @@ namespace GetUserInfo
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("使用方法：dotnet PayInfo.dll \"base64 of the login result json\"");
+                Console.WriteLine("使用方法：dotnet GetUserInfo.dll \"base64 of the login result json\"");
                 return;
             }
             LoginResult? loginResult = null;
