@@ -1,7 +1,7 @@
 ﻿using Cpdaily;
 using Newtonsoft.Json;
 
-namespace MobileLogin
+namespace PayInfo
 {
     public class Program
     {
@@ -51,6 +51,16 @@ namespace MobileLogin
                 // 获取访问校内应用的 Cookie
                 var cookie = await cpdaily.UserStoreAppListAsync(loginResult, schoolDetails);
                 Console.WriteLine(cookie);
+                // 获取用户信息
+                var info = await cpdaily.GetUserInfoAsync(loginResult);
+                if (info is not null)
+                {
+                    Console.WriteLine(JsonConvert.SerializeObject(info));
+                }
+                else
+                {
+                    Console.WriteLine("没能获取到用户信息!");
+                }
             }
             catch (Exception ex)
             {

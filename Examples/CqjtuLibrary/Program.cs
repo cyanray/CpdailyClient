@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Cqjtu = Cpdaily.SchoolServices.Cqjtu;
 
-namespace MobileLogin
+namespace PayInfo
 {
     public class Program
     {

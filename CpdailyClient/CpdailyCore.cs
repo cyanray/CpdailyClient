@@ -47,7 +47,6 @@ namespace Cpdaily
             request.AddHeader("CpdailyClientType", "CPDAILY");
             request.AddHeader("CpdailyStandAlone", "0");
             request.AddHeader("CpdailyInfo", DeviceInfo.EncryptCache);
-            request.AddHeader("User-Agent", ApiUserAgent);
             return request;
         }
 
@@ -125,7 +124,7 @@ namespace Cpdaily
             };
             var request = CreateApiRequest(Method.GET);
             var response = await client.ExecuteGetAsync(request);
-            ApiResponse<object> apiResponse= ParseOrThrowException<object>(response);
+            ApiResponse<object> apiResponse = ParseOrThrowException<object>(response);
 
             List<School> schools = new List<School>();
             var lists = JArray.FromObject(apiResponse.Data);
@@ -389,9 +388,10 @@ namespace Cpdaily
 
             string ampCookies = CpdailyCrypto.DESEncrypt(JsonConvert.SerializeObject(amp), "XCE927==", CpdailyCrypto.IV);
 
-            string? url = $"{ampUrlPrefix}/wec-portal-mobile/client/userStoreAppList?oick={CpdailyCrypto.GetOick(loginResult.UserId)}";
+            string? url = $"{ampUrlPrefix}/wec-portal-mobile/client/userStoreAppList";
             IRestResponse? response = null;
             var cookieContainer = new CookieContainer();
+            cookieContainer.Add(CookieContainer.GetAllCookies());
             cookieContainer.Add(new Uri(idsUrlPrefix), new Cookie("CASTGC", tgcRaw));
             cookieContainer.Add(new Uri(idsUrlPrefix), new Cookie("AUTHTGC", tgcRaw));
             // RestSharp 不会处理复杂的跳转，因此自行循环处理
@@ -407,7 +407,6 @@ namespace Cpdaily
                 request.AddHeader("TGC", tgc);
                 request.AddHeader("AmpCookies", ampCookies);
                 response = await client.ExecuteGetAsync(request);
-
                 url = response.Headers.Where(x => x.Name == "Location").Select(x => x.Value.ToString()).FirstOrDefault();
             } while (!string.IsNullOrEmpty(url));
 
@@ -418,6 +417,54 @@ namespace Cpdaily
             }
             return result;
         }
+
+        public async Task<UserInfo> GetUserInfoAsync(LoginResult loginResult)
+        {
+            string? sessionTokenRaw = loginResult.SessionToken;
+            string? tgcRaw = loginResult.Tgc;
+            if (sessionTokenRaw is null || tgcRaw is null)
+            {
+                throw new Exception("SessionToken 或 Tgc 不可为 null.");
+            }
+            if (loginResult.TenantId is null)
+            {
+                throw new Exception("TenantId 不可为 null.");
+            }
+
+            string sessionToken = CpdailyCrypto.DESEncrypt(sessionTokenRaw, "XCE927==", CpdailyCrypto.IV);
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(CookieContainer.GetAllCookies());
+            cookieContainer.Add(new Uri("https://mobile.campushoy.com"), new Cookie("clientType", "cpdaily_student"));
+            cookieContainer.Add(new Uri("https://mobile.campushoy.com"), new Cookie("tenantId", loginResult.TenantId));
+            cookieContainer.Add(new Uri("https://mobile.campushoy.com"), new Cookie("sessionToken", loginResult.SessionToken));
+
+            DeviceInfo deviceInfo = new DeviceInfo
+            {
+                AppVersion = DeviceInfo.AppVersion,
+                SystemName = DeviceInfo.SystemName,
+                SystemVersion = DeviceInfo.SystemVersion,
+                DeviceId = DeviceInfo.DeviceId,
+                Model = DeviceInfo.Model,
+                Longitude = DeviceInfo.Longitude,
+                Latitude = DeviceInfo.Latitude,
+                UserId = loginResult.OpenId
+            };
+
+            string url = $"https://mobile.campushoy.com/v6/user/new/myMainPage";
+            RestClient client = new RestClient(url)
+            {
+                UserAgent = WebUserAgent,
+                CookieContainer = cookieContainer
+            };
+            client.Proxy = new WebProxy("127.0.0.1", 8888);
+            var request = CreateApiRequest(Method.POST, sessionToken);
+            request.AddHeader("tenantId", loginResult.TenantId);
+            request.AddHeader("CpdailyInfo", deviceInfo.Encrypt());
+            var response = await client.ExecutePostAsync(request);
+            ApiResponse<UserInfo> result = ParseOrThrowException<UserInfo>(response);
+            return result.Data;
+        }
+
 
     }
 }

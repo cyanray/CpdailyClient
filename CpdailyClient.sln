@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CqjtuLibrary", "Examples\Cq
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayInfo", "Examples\PayInfo\PayInfo.csproj", "{86A2578F-B5C6-4F21-933B-41B334E3E2B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetUserInfo", "Examples\GetUserInfo\GetUserInfo.csproj", "{F3D3DB25-0FF5-41B4-A89D-A70CC11C12DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{86A2578F-B5C6-4F21-933B-41B334E3E2B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86A2578F-B5C6-4F21-933B-41B334E3E2B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86A2578F-B5C6-4F21-933B-41B334E3E2B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3D3DB25-0FF5-41B4-A89D-A70CC11C12DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3D3DB25-0FF5-41B4-A89D-A70CC11C12DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3D3DB25-0FF5-41B4-A89D-A70CC11C12DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3D3DB25-0FF5-41B4-A89D-A70CC11C12DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{44E7998B-BFD8-4287-8CFB-306BA56ADDAD} = {86EAB942-8DA2-4264-908C-A8245438D44B}
 		{05EA4E66-ABAE-4446-9857-66670863C062} = {86EAB942-8DA2-4264-908C-A8245438D44B}
 		{86A2578F-B5C6-4F21-933B-41B334E3E2B2} = {86EAB942-8DA2-4264-908C-A8245438D44B}
+		{F3D3DB25-0FF5-41B4-A89D-A70CC11C12DA} = {86EAB942-8DA2-4264-908C-A8245438D44B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D4D8650-80FC-4170-AB42-947178C2AB35}
