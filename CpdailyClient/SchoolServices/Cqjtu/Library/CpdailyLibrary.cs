@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Cpdaily.SchoolServices.Cqjtu
+namespace Cpdaily.SchoolServices.Cqjtu.Library
 {
     public class CpdailyLibrary
     {

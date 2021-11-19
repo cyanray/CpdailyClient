@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cpdaily.SchoolServices.Cqjtu
+namespace Cpdaily.SchoolServices.Cqjtu.Library
 {
     /// <summary>
     /// 图书馆预约记录

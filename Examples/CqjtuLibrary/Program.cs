@@ -17,7 +17,7 @@ namespace MobileLogin
             Console.WriteLine($"Cookie: {cookie}");
             try
             {
-                var library = new Cqjtu.CpdailyLibrary();
+                var library = new Cqjtu.Library.CpdailyLibrary();
                 // 图书馆 App 需要额外登录一次
                 cookie = await library.LoginAsync(cookie);
                 await library.ReserveAsync(cookie, "南岸馆", DateTime.Parse("2021-11-18"));
