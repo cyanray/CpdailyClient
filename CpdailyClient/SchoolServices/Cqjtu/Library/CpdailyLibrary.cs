@@ -1,13 +1,8 @@
 ﻿using Cpdaily.Exceptions;
 using RestSharp;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Cpdaily.SchoolServices.Cqjtu.Library
 {
@@ -50,7 +45,6 @@ namespace Cpdaily.SchoolServices.Cqjtu.Library
             return result;
         }
 
-
         public async Task ReserveAsync(string cookie, string libraryName, DateTime date)
         {
             string url = $"http://libopp.cqjtu.edu.cn/tsg.asp?riqi={date:yyyy-MM-dd}&quyu={libraryName}&vehicle=同意";
@@ -71,7 +65,7 @@ namespace Cpdaily.SchoolServices.Cqjtu.Library
                 throw new HttpRequestFailedException(response.StatusCode);
         }
 
-        public async Task CancelReservationsAsync(string cookies, string Id)
+        public async Task CancelReservationsAsync(string cookie, string Id)
         {
             string url = $"http://libopp.cqjtu.edu.cn/myorder.asp?cz=del&id={Id}";
             RestClient client = new RestClient(url)
@@ -79,7 +73,7 @@ namespace Cpdaily.SchoolServices.Cqjtu.Library
                 UserAgent = UserAgent
             };
             var request = new RestRequest(Method.GET);
-            request.AddHeader("Cookie", cookies);
+            request.AddHeader("Cookie", cookie);
             request.AddHeader("X-Requested-With", "com.wisedu.cpdaily");
             var response = await client.ExecuteGetAsync(request);
             if (response.StatusCode != HttpStatusCode.OK)
