@@ -8,8 +8,6 @@ namespace Cpdaily.SchoolServices.Cqjtu.Library
 {
     public class CpdailyLibrary
     {
-        const string UserAgent = "Mozilla/5.0 (Linux; Android 11; Redmi K30 5G Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.185 Mobile Safari/537.36  cpdaily/8.2.17 wisedu/8.2.17";
-
         public async Task<string> LoginAsync(string cookie)
         {
             string? url = "http://libopp.cqjtu.edu.cn/";
@@ -32,7 +30,7 @@ namespace Cpdaily.SchoolServices.Cqjtu.Library
                 {
                     CookieContainer = cookieContainer,
                     FollowRedirects = false,
-                    UserAgent = UserAgent
+                    UserAgent = Constants.UserAgent
                 };
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("Upgrade-Insecure-Requests", "1");
@@ -50,7 +48,7 @@ namespace Cpdaily.SchoolServices.Cqjtu.Library
             string url = $"http://libopp.cqjtu.edu.cn/tsg.asp?riqi={date:yyyy-MM-dd}&quyu={libraryName}&vehicle=同意";
             RestClient client = new RestClient(url)
             {
-                UserAgent = UserAgent
+                UserAgent = Constants.UserAgent
             };
             var request = new RestRequest(Method.GET);
             request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
@@ -70,7 +68,7 @@ namespace Cpdaily.SchoolServices.Cqjtu.Library
             string url = $"http://libopp.cqjtu.edu.cn/myorder.asp?cz=del&id={Id}";
             RestClient client = new RestClient(url)
             {
-                UserAgent = UserAgent
+                UserAgent = Constants.UserAgent
             };
             var request = new RestRequest(Method.GET);
             request.AddHeader("Cookie", cookie);
@@ -85,7 +83,7 @@ namespace Cpdaily.SchoolServices.Cqjtu.Library
             string url = "http://libopp.cqjtu.edu.cn/myorder.asp";
             RestClient client = new RestClient(url)
             {
-                UserAgent = UserAgent
+                UserAgent = Constants.UserAgent
             };
             var request = new RestRequest(Method.GET);
             request.AddHeader("Cookie", cookie);
